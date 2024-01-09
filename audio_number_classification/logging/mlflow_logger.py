@@ -1,7 +1,7 @@
 import mlflow
 from omegaconf import DictConfig
 
-from audio_number_classification.logging.logger import Logger
+from .logger import Logger
 
 
 class MLFlowLogger(Logger):
