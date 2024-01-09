@@ -33,7 +33,7 @@ logging:
   file:
     save_path: "logs/training.log"
   mlflow:
-    uri: "http://localhost:5000/" #"http://128.0.1.1:8080"
+    uri: "http://128.0.1.1:8080"
   wandb:
     project: "audio_number_classification"
     anonymous: "must"
