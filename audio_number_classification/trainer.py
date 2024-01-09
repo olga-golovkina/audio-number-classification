@@ -1,5 +1,6 @@
 import copy
 
+import numpy as np
 import torch
 from torch import nn
 from torch.optim import Adam
@@ -43,22 +44,19 @@ class Trainer:
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=10, verbose=True)
 
     def fit(self):
-        train_losses = []
-        valid_losses = []
-
         best_train_loss = None
         best_val_loss = None
         best_model = None
 
         for _ in range(1, self.epochs + 1):
-            train_loss = self.__train_epoch(
+            train_loss, train_acc = self.__train_epoch(
                 self.model,
                 self.train_loader,
                 self.criterion,
                 self.optimizer,
                 self.device,
             )
-            valid_loss = self.__valid_epoch(
+            valid_loss, valid_acc = self.__valid_epoch(
                 self.model, self.valid_loader, self.criterion, self.device
             )
 
@@ -71,8 +69,16 @@ class Trainer:
                 best_val_loss = valid_loss
                 best_model = copy.deepcopy(self.model)
 
-            train_losses.append(train_loss)
-            valid_losses.append(valid_loss)
+            self.logger.log_metrics(
+                {
+                    "train loss": train_loss,
+                    "train accuracy": train_acc,
+                    "valid loss": valid_loss,
+                    "valid accuracy": valid_acc,
+                }
+            )
+
+        self.logger.close()
 
         return best_model, best_train_loss, best_val_loss
 
@@ -80,6 +86,9 @@ class Trainer:
         model.train()
 
         train_loss = 0.0
+
+        target_cls = []
+        pred_cls = []
 
         for props, target in tqdm(train_loader, desc="Train: "):
             optimizer.zero_grad()
@@ -94,14 +103,24 @@ class Trainer:
 
             train_loss += loss.item()
 
-        train_loss /= len(train_loader)
+            target_cls.extend(target.squeeze().to(torch.long))
+            pred_cls.extend(torch.round(pred.squeeze()).to(torch.long))
 
-        return train_loss
+        train_loss /= len(train_loader)
+        train_acc = float(
+            np.mean(np.array(target_cls) == np.array([p.max() for p in pred_cls]))
+        )
+
+        return train_loss, train_acc
 
     def __valid_epoch(self, model, valid_loader, criterion, device):
         model.eval()
 
         valid_loss = 0.0
+
+        target_cls = []
+        pred_cls = []
+
         with torch.no_grad():
             for props, target in valid_loader:
                 props, target = props.to(device), target.to(device)
@@ -111,9 +130,15 @@ class Trainer:
                 loss = criterion(pred, target)
                 valid_loss += loss.item()
 
-        valid_loss /= len(valid_loader)
+                target_cls.extend(target.squeeze().to(torch.long))
+                pred_cls.extend(torch.round(pred.squeeze()).to(torch.long))
 
-        return valid_loss
+        valid_loss /= len(valid_loader)
+        valid_acc = float(
+            np.mean(np.array(target_cls) == np.array([p.max() for p in pred_cls]))
+        )
+
+        return valid_loss, valid_acc
 
     def __is_loss_valid(self, train_loss, best_train_loss, val_loss, best_val_loss):
         if best_train_loss is None or best_val_loss is None:

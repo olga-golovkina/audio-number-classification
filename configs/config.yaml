@@ -33,6 +33,8 @@ logging:
   file:
     save_path: "logs/training.log"
   mlflow:
-    conn_string: "http://localhost:5000/" #"http://128.0.1.1:8080"
+    uri: "http://localhost:5000/" #"http://128.0.1.1:8080"
   wandb:
-    conn_string: "http://128.0.1.1:8080"
+    project: "audio_number_classification"
+    anonymous: "must"
+    notes: "Run result from https://github.com/olga-golovkina/audio-number-classification repos"

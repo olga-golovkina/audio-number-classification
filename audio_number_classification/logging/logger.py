@@ -13,7 +13,7 @@ class Logger(ABC):
         pass
 
     @abstractmethod
-    def log_exception(self, exception):
+    def close(self):
         pass
 
     def get_code_version(self):
@@ -29,9 +29,6 @@ class LoggerDecorator(Logger, ABC):
 
     def log_hyperparams(self, hyperparams, version_code):
         self.logger.log_hyperparams(hyperparams, version_code)
-
-    def log_exception(self, exception):
-        self.logger.log_exception(exception)
 
     def __init__(self, logger: Logger):
         self.logger = logger

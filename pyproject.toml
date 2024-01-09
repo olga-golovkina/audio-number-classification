@@ -19,6 +19,9 @@ soundfile = "^0.12.1"
 black = "^23.12.1"
 isort = "^5.13.2"
 flake8 = "^7.0.0"
+wandb = "^0.16.1"
+mlflow = "^2.9.2"
+numpy = "^1.26.3"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -7,4 +7,8 @@ from ..logging.wandb_logger import WandbLoggerDecorator
 class LoggerFactory:
     @staticmethod
     def get_final_decorated_logger(cfg: DictConfig):
-        return WandbLoggerDecorator(MLFlowLogger(cfg["mlflow"]), cfg["wandb"])
+        log = cfg.logging
+
+        return WandbLoggerDecorator(
+            MLFlowLogger(log.get("mlflow", None)), log.get("wandb", None)
+        )
