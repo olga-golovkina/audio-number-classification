@@ -1,0 +1,5 @@
+outs:
+- md5: 414009a6ff8fca8a2062bf14c7d1058d
+  size: 5076
+  hash: md5
+  path: train_annotations.csv
