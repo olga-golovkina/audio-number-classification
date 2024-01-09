@@ -55,3 +55,14 @@ class MLFlowLoggerDecorator(LoggerDecorator):
 
     def log_hyperparams(self, hyperparams, version_code):
         super().log_hyperparams(hyperparams, version_code)
+
+
+class FileLogger(Logger):
+    def log_hyperparams(self, hyperparams, version_code):
+        pass
+
+    def log_metrics(self, metric):
+        pass
+
+    def log_exception(self, exception):
+        pass
