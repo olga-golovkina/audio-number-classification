@@ -22,7 +22,6 @@ def main():
 
     trans = AugmentationFactory.get_augmentation(cfg)
     model = ModelFactory.get_model_from(cfg)
-    _ = model
 
     test_audio_path = glob.glob(path.join(test_dataset_folder, "*.mp3"))
 
