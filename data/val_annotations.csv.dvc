@@ -1,5 +1,5 @@
 outs:
-- md5: 903b5d82c41a37f54567d43af3560ab4
-  size: 201313
+- md5: 86fd4fb5cfc925d4150ddc2639e5a382
+  size: 1294
   hash: md5
   path: val_annotations.csv
