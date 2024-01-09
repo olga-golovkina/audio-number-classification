@@ -1,4 +1,5 @@
 import os
+import sys
 from os import path
 from pathlib import Path
 
@@ -56,10 +57,19 @@ class AudioDataset(Dataset):
 
         if local_train_path.exists():
             os.remove(local_train_path.resolve())
+            sys.stdout.write("Overwrite train data")
 
         if local_val_path.exists():
             os.remove(local_val_path.resolve())
 
+        sys.stdout.write("Load audio dataset...")
         fs.get("data/audio", "data/audio", recursive=True)
+        sys.stdout.write("Audio dataset has loaded...")
+
+        sys.stdout.write("Load train annotations...")
         fs.get_file("data/train_annotations.csv", local_train_path.resolve())
+        sys.stdout.write("Train annotations have loaded...")
+
+        sys.stdout.write("Load validation annotations...")
         fs.get_file("data/val_annotations.csv", local_val_path.resolve())
+        sys.stdout.write("Validation annotations have loaded...")
