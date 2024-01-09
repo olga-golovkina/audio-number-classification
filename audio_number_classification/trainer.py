@@ -57,7 +57,7 @@ class Trainer:
 
         self.logger.log_hyperparams(self.hyperparams)
 
-        for _ in range(1, self.epochs + 1):
+        for ep in range(1, self.epochs + 1):
             train_loss, train_acc = self.__train_epoch(
                 self.model,
                 self.train_loader,
@@ -80,6 +80,7 @@ class Trainer:
 
             self.logger.log_metrics(
                 {
+                    "epoch": ep,
                     "train loss": train_loss,
                     "train accuracy": train_acc,
                     "valid loss": valid_loss,
