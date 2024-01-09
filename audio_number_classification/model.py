@@ -68,34 +68,35 @@ class CNNNetwork(nn.Module):
 
     def save(self, model_path: Path, use_dvc=False):
         if model_path is None:
-            raise TypeError("model_path must by Path type")
-
-        if not model_path.is_file():
-            raise ValueError("model_path must be file path")
+            raise TypeError("model_path must be Path type")
 
         model_path.parents[0].mkdir(parents=True, exist_ok=True)
 
         save_path = model_path.resolve()
         torch.save(self.state_dict(), save_path)
 
+        # я, конечно, хз,
+        # но кажется, что так не надо делать,
+        # потому что это ведет к изменению репозитория.
+        # да и нужны авторизационные данные для гугла.
+        # так то, таким образом, можно запушить на диск.
+        # в dvc api только вытаскивать можно
         if use_dvc:
             os.system(f"dvc add {save_path}")
             os.system("dvc commit -m 'Add model'")
             os.system("dvc push")
 
     def load(self, model_path: Path = None, use_dvc: bool = False):
-        fs = dvc.api.DVCFileSystem()
+        if use_dvc:
+            fs = dvc.api.DVCFileSystem()
 
-        if model_path.is_file() and model_path.exists():
-            warnings.warn(
-                "The model is already downloaded. "
-                "If you want to update it you should to delete old model.",
-                stacklevel=2,
-            )
-            return
+            if model_path.is_file() and model_path.exists():
+                os.remove(model_path.resolve())
 
-        if not fs.exists("./models/model.pt"):
-            warnings.warn("The model is not exists in remote storage", stacklevel=2)
-            return
+            if not fs.exists("./models/model.pt"):
+                warnings.warn("The model is not exists in remote storage", stacklevel=2)
+                return
 
-        fs.get_file("./models/model.pt", model_path)
+            fs.get_file("./models/model.pt", model_path)
+
+        self.load_state_dict(torch.load(model_path.resolve()))

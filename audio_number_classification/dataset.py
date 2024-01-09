@@ -31,7 +31,7 @@ class AudioDataset(Dataset):
         filename = row["audio"]
         dir = row["dir"]
 
-        return path.join(self.dataset_dir, dir, filename)
+        return path.join(dir, filename)
 
     def __get_label(self, index):
         return self.annotations.iloc[index, 2]

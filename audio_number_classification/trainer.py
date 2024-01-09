@@ -1,13 +1,16 @@
-from pathlib import Path
+import copy
 
 import torch
-import tqdm
-from dataset import AudioDataset
-from logger import Logger
-from model import CNNNetwork
+from torch import nn
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from audio_number_classification.logging.logger import Logger
+
+from .dataset import AudioDataset
+from .model import CNNNetwork
 
 
 class Trainer:
@@ -19,23 +22,23 @@ class Trainer:
         logger: Logger,
         epochs=4,
         batch_size=16,
+        learning_rate=1e-3,
         device="cpu",
-        model_save_name: Path = None,
     ):
         self.model = model
-        self.model_save_name = model_save_name
         self.epochs = epochs
         self.logger = logger
         self.device = device
 
-        self.train_dataloader = DataLoader(
+        self.train_loader = DataLoader(
             train_dataset, shuffle=True, batch_size=batch_size
         )
-        self.val_dataloader = DataLoader(
+        self.valid_loader = DataLoader(
             val_dataset, shuffle=False, batch_size=batch_size
         )
 
-        self.optimizer = Adam(model.parameters(), lr=1e-3)
+        self.optimizer = Adam(model.parameters(), lr=learning_rate)
+        self.criterion = nn.CrossEntropyLoss()
 
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=10, verbose=True)
 
@@ -45,7 +48,7 @@ class Trainer:
 
         best_train_loss = None
         best_val_loss = None
-        best_model_path = None
+        best_model = None
 
         for _ in range(1, self.epochs + 1):
             train_loss = self.__train_epoch(
@@ -66,16 +69,12 @@ class Trainer:
             ):
                 best_train_loss = train_loss
                 best_val_loss = valid_loss
-                self.model.save(self.model_save_name)
+                best_model = copy.deepcopy(self.model)
 
             train_losses.append(train_loss)
             valid_losses.append(valid_loss)
 
-            print(f"Current train loss: {train_loss}")
-            print(f"Current validation loss: {valid_loss}")
-            print(f"Current loss difference: {abs(train_loss - valid_loss)}")
-
-        return best_model_path, best_train_loss, best_val_loss
+        return best_model, best_train_loss, best_val_loss
 
     def __train_epoch(self, model, train_loader, criterion, optimizer, device):
         model.train()
@@ -116,7 +115,7 @@ class Trainer:
 
         return valid_loss
 
-    def __is_loss_valid(train_loss, best_train_loss, val_loss, best_val_loss):
+    def __is_loss_valid(self, train_loss, best_train_loss, val_loss, best_val_loss):
         if best_train_loss is None or best_val_loss is None:
             return True
 

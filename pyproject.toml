@@ -15,6 +15,10 @@ tqdm = "^4.66.1"
 gitpython = "^3.1.40"
 dvc = "^3.38.1"
 dvc-gdrive = "^3.0.1"
+soundfile = "^0.12.1"
+black = "^23.12.1"
+isort = "^5.13.2"
+flake8 = "^7.0.0"
 
 
 [tool.poetry.group.dev.dependencies]

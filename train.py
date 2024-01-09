@@ -1,27 +1,38 @@
 from pathlib import Path
 
-import torchaudio
+from hydra import compose, initialize
 
-from audio_number_classification.augmentation import AudioTransformer
-from audio_number_classification.dataset import AudioDataset
+from audio_number_classification.factoring.augmentation import AugmentationFactory
+from audio_number_classification.factoring.dataset import DatasetFactory
+from audio_number_classification.factoring.logger import LoggerFactory
+from audio_number_classification.factoring.model import ModelFactory
+from audio_number_classification.factoring.trainer import TrainerFactory
 
 
 def main():
-    train_annotations = "data/train_annotations.csv"
+    initialize(
+        version_base=None, config_path="configs", job_name="audio_number_classification"
+    )
+    cfg = compose(config_name="config")
 
-    SAMPLE_RATE = 22050
-    SAMPLE_SIZE = 22050
+    trans = AugmentationFactory.get_augmentation(cfg)
 
-    mel_spectrogram = torchaudio.transforms.MelSpectrogram(
-        sample_rate=SAMPLE_RATE, n_fft=1024, hop_length=512, n_mels=64, center=True
+    train_dataset = DatasetFactory.get_dataset(trans, cfg, Path(cfg["path"]["train"]))
+    val_dataset = DatasetFactory.get_dataset(trans, cfg, Path(cfg["path"]["val"]))
+
+    model = ModelFactory.create_empty_model(cfg)
+
+    trainer = TrainerFactory.get_custom_trainer(
+        model,
+        train_dataset,
+        val_dataset,
+        LoggerFactory.get_final_decorated_logger(cfg),
+        cfg,
     )
 
-    _ = AudioDataset(
-        Path(train_annotations),
-        AudioTransformer(mel_spectrogram, SAMPLE_RATE, SAMPLE_SIZE, "cpu"),
-        "cpu",
-        True,
-    )
+    best_model, _, _ = trainer.fit()
+
+    best_model.save(Path(cfg["path"]["model"]))
 
 
 if __name__ == "__main__":

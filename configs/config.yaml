@@ -1,12 +1,38 @@
-model:
+shared:
   device: "cpu"
-  save_name: "./models/model.pt"
-  use_dvc: True
+
+model:
+  pull_dvc: True
+  push_dvc: False
+
+path:
+  train: "data/train_annotations.csv"
+  val: "data/val_annotations.csv"
+  test: "data/test"
+  model: "models/model.pt"
+  result: "results/pred_res.csv"
+
+
+dataset:
+  pull_dvc: True
+  sample_rate: 22050
+  sample_size: 22050
 
 training:
   epochs: 4
-  learning_rate: 0.001
+  learning_rate: 1e-3
   batch_size: 16
 
+spectogram:
+  n_fft: 1024
+  hop_length: 512
+  n_mels: 64
+  center: True
+
 logging:
-  mlflow_connection_string: "http://128.0.1.1:8080"
+  file:
+    save_path: "logs/training.log"
+  mlflow:
+    conn_string: "http://localhost:5000/" #"http://128.0.1.1:8080"
+  wandb:
+    conn_string: "http://128.0.1.1:8080"

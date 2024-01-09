@@ -1,0 +1,9 @@
+torch
+torchaudio
+pandas
+hydra-core
+GitPython
+tqdm
+dvc
+dvc-gdrive
+soundfile

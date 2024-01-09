@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import git
+
 
 class Logger(ABC):
     @abstractmethod
@@ -14,6 +16,12 @@ class Logger(ABC):
     def log_exception(self, exception):
         pass
 
+    def get_code_version(self):
+        repo = git.Repo(search_parent_directories=True)
+        sha = repo.head.commit.hexsha
+
+        return repo.git.rev_parse(sha, short=7)
+
 
 class LoggerDecorator(Logger, ABC):
     def log_metrics(self, metric):
@@ -27,42 +35,3 @@ class LoggerDecorator(Logger, ABC):
 
     def __init__(self, logger: Logger):
         self.logger = logger
-
-
-class WandbLoggerDecorator(LoggerDecorator):
-    def __init__(self, logger, cfg):
-        super().__init__(logger)
-
-    def log_exception(self, exception):
-        super().log_exception(exception)
-
-    def log_metrics(self, metric):
-        super().log_metrics(metric)
-
-    def log_hyperparams(self, hyperparams, version_code):
-        super().log_hyperparams(hyperparams, version_code)
-
-
-class MLFlowLoggerDecorator(LoggerDecorator):
-    def __init__(self, logger, cfg):
-        super().__init__(logger)
-
-    def log_exception(self, exception):
-        super().log_exception(exception)
-
-    def log_metrics(self, metric):
-        super().log_metrics(metric)
-
-    def log_hyperparams(self, hyperparams, version_code):
-        super().log_hyperparams(hyperparams, version_code)
-
-
-class FileLogger(Logger):
-    def log_hyperparams(self, hyperparams, version_code):
-        pass
-
-    def log_metrics(self, metric):
-        pass
-
-    def log_exception(self, exception):
-        pass
