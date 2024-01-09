@@ -1,4 +1,5 @@
 import glob
+import sys
 from os import path
 from pathlib import Path
 
@@ -19,7 +20,10 @@ def main():
     )
 
     fs = dvc.api.DVCFileSystem()
+
+    sys.stdout.write("Load test dataset...")
     fs.get("data/test", "data/test", recursive=True)
+    sys.stdout.write("Test dataset has loaded...")
 
     cfg = compose(config_name="config")
     test_dataset_folder = cfg["path"]["test"]
