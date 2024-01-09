@@ -8,9 +8,8 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from audio_number_classification.logging.logger import Logger
-
 from .dataset import AudioDataset
+from .logging.logger import Logger
 from .model import CNNNetwork
 
 

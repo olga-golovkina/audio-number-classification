@@ -1,5 +1,6 @@
 import wandb
-from audio_number_classification.logging.logger import LoggerDecorator
+
+from .logger import LoggerDecorator
 
 
 class WandbLoggerDecorator(LoggerDecorator):
