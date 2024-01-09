@@ -12,15 +12,17 @@ class WandbLoggerDecorator(LoggerDecorator):
         super().__init__(logger)
 
         wandb.init(
-            project=cfg.project, anonymous=cfg.get("anonymous", "must"), notes=cfg.notes
+            project=cfg.project,
+            anonymous=cfg.get("anonymous", "must"),
+            config={"version_code": self.get_code_version()},
+            notes=cfg.notes,
         )
 
     def log_metrics(self, metric: dict):
         super().log_metrics(metric)
         wandb.log(metric)
 
-    def log_hyperparams(self, hyperparams: dict, version_code):
-        super().log_hyperparams(hyperparams, version_code)
+    def log_hyperparams(self, hyperparams: dict):
+        super().log_hyperparams(hyperparams)
 
-        wandb.log(version_code)
         wandb.log(hyperparams)

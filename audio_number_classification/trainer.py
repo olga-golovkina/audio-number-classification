@@ -31,6 +31,13 @@ class Trainer:
         self.logger = logger
         self.device = device
 
+        self.hyperparams = {
+            "epochs": epochs,
+            "batch_size": batch_size,
+            "learning_rate": learning_rate,
+            "device": device,
+        }
+
         self.train_loader = DataLoader(
             train_dataset, shuffle=True, batch_size=batch_size
         )
@@ -47,6 +54,8 @@ class Trainer:
         best_train_loss = None
         best_val_loss = None
         best_model = None
+
+        self.logger.log_hyperparams(self.hyperparams)
 
         for _ in range(1, self.epochs + 1):
             train_loss, train_acc = self.__train_epoch(

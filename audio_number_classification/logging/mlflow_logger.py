@@ -13,5 +13,5 @@ class MLFlowLogger(Logger):
     def log_metrics(self, metric):
         super().log_metrics(metric)
 
-    def log_hyperparams(self, hyperparams, version_code):
-        super().log_hyperparams(hyperparams, version_code)
+    def log_hyperparams(self, hyperparams):
+        super().log_hyperparams(hyperparams)

@@ -5,7 +5,7 @@ import git
 
 class Logger(ABC):
     @abstractmethod
-    def log_hyperparams(self, hyperparams, version_code):
+    def log_hyperparams(self, hyperparams):
         pass
 
     @abstractmethod
@@ -27,8 +27,8 @@ class LoggerDecorator(Logger, ABC):
     def log_metrics(self, metric):
         self.logger.log_metrics(metric)
 
-    def log_hyperparams(self, hyperparams, version_code):
-        self.logger.log_hyperparams(hyperparams, version_code)
+    def log_hyperparams(self, hyperparams):
+        self.logger.log_hyperparams(hyperparams)
 
     def __init__(self, logger: Logger):
         self.logger = logger
