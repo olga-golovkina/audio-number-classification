@@ -1,7 +1,7 @@
 from omegaconf import DictConfig
 
-from ..logging.mlflow_logger import MLFlowLogger
-from ..logging.wandb_logger import WandbLoggerDecorator
+from audio_number_classification.logging.mlflow_logger import MLFlowLogger
+from audio_number_classification.logging.wandb_logger import WandbLoggerDecorator
 
 
 class LoggerFactory:
