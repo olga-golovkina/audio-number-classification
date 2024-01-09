@@ -1,3 +1,4 @@
+import os
 from os import path
 from pathlib import Path
 
@@ -50,4 +51,15 @@ class AudioDataset(Dataset):
 
         fs = dvc.api.DVCFileSystem()
 
-        fs.get("data", "data", recursive=True)
+        local_train_path = Path("data/train_annotations.csv")
+        local_val_path = Path("data/val_annotations.csv")
+
+        if local_train_path.exists():
+            os.remove(local_train_path.resolve())
+
+        if local_val_path.exists():
+            os.remove(local_val_path.resolve())
+
+        fs.get("data/audio", "data/audio", recursive=True)
+        fs.get_file("data/train_annotations.csv", local_train_path.resolve())
+        fs.get_file("data/val_annotations.csv", local_val_path.resolve())

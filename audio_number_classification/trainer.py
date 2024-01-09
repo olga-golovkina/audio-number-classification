@@ -99,7 +99,7 @@ class Trainer:
 
         return train_loss
 
-    def __valid_epoch(self, model, valid_loader, optimizer, criterion, device):
+    def __valid_epoch(self, model, valid_loader, criterion, device):
         model.eval()
 
         valid_loss = 0.0
