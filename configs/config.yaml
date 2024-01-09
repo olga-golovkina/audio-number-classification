@@ -1,0 +1,12 @@
+model:
+  device: "cpu"
+  save_name: "./models/model.pt"
+  use_dvc: True
+
+training:
+  epochs: 4
+  learning_rate: 0.001
+  batch_size: 16
+
+logging:
+  mlflow_connection_string: "http://128.0.1.1:8080"
