@@ -2,6 +2,7 @@ import glob
 from os import path
 from pathlib import Path
 
+import dvc.api
 import pandas as pd
 import torchaudio
 from hydra import compose, initialize
@@ -16,6 +17,9 @@ def main():
     initialize(
         version_base=None, config_path="configs", job_name="audio_number_classification"
     )
+
+    fs = dvc.api.DVCFileSystem()
+    fs.get("data/test", "data/test", recursive=True)
 
     cfg = compose(config_name="config")
     test_dataset_folder = cfg["path"]["test"]
